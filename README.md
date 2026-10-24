@@ -1,9 +1,9 @@
 # OnboardIQ
 
 *Built by team **OBLIVION**, a team of passionate full-stack developers.*
---Hasrat Ali (25/DSC/20)
---Santanu Mandal (25/ITY/21)
---Adhokshaj (25/ITY/09)
+1. Hasrat Ali (25/DSC/20)
+2. Santanu Mandal (25/ITY/21)
+3. Adhokshaj (25/ITY/09)
 
 **Intelligent KYC onboarding, document verification and watchlist screening with maker-checker** for Deccan Digital Bank (fictional). Use case 02 of the HCLTech BFSI Engineering Challenge.
 
