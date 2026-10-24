@@ -12,16 +12,20 @@ async function main() {
   }
   ensureStorage();
   await migrate({ log: true });
-  if (env.SEED_ON_START) {
-    const { seedIfEmpty } = await import('./db/seed');
-    await seedIfEmpty();
-  }
   const app = createApp();
   const server = app.listen(env.PORT, () => {
     console.log(`[api] OnboardIQ API listening on http://localhost:${env.PORT} (docs: /api/docs, provider default: ${env.EXTRACTION_PROVIDER})`);
   });
+  // Seed in the background so the port is open right away (seeding a remote database can take minutes),
+  // then recover interrupted processing.
+  const seeded = env.SEED_ON_START
+    ? import('./db/seed')
+        .then(({ seedIfIncomplete }) => seedIfIncomplete())
+        .then(() => console.log('[seed] done'))
+        .catch((e) => console.error('[seed] failed:', e.message))
+    : Promise.resolve();
   // background jobs: recover interrupted processing, close expired resubmissions every minute
-  recoverStuck().catch((e) => console.error('[recover]', e.message));
+  seeded.then(() => recoverStuck()).catch((e) => console.error('[recover]', e.message));
   const timer = setInterval(() => {
     closeExpired()
       .then((c) => c.length && console.log(`[expiry] closed ${c.join(', ')}`))

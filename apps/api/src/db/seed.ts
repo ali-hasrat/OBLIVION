@@ -154,12 +154,12 @@ export async function seedApplications(set: 'sample' | 'eval', log = console.log
   log(`[seed] ${set}: ${created} applications processed -> ${dist.rows.map((r) => `${r.status}=${r.n}`).join(', ')}`);
 }
 
-export async function seedIfEmpty() {
-  const n = Number((await pool.query('SELECT count(*) FROM users')).rows[0].count);
-  if (n > 0) return false;
-  await seedReference();
+/** Seed on start; resumes an interrupted seed (every step is idempotent, existing applications are skipped). */
+export async function seedIfIncomplete() {
+  // extraction_provider is the last row seedReference writes
+  const done = await pool.query("SELECT 1 FROM system_settings WHERE key = 'extraction_provider'");
+  if (!done.rowCount) await seedReference();
   await seedApplications('sample');
-  return true;
 }
 
 const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
