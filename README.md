@@ -45,6 +45,7 @@ First start takes a few minutes (images, `npm install`, `pip install`, model tra
 | API health | http://localhost:4000/api/v1/health |
 | AI service (FastAPI docs) | http://localhost:8000/docs |
 | PostgreSQL | `localhost:5432`, user/password/db `onboardiq` |
+| Public URL | https://oblivion-onboardiq.onrender.com/login |
 
 Stop with `Ctrl+C`; `docker compose down -v` also deletes the database volume (next start re-seeds).
 
