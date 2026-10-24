@@ -7,6 +7,9 @@ import { recoverStuck } from './services/processing';
 import { ensureStorage } from './services/storage';
 
 async function main() {
+  if (env.NODE_ENV === 'production' && !process.env.DATABASE_URL?.trim()) {
+    throw new Error('DATABASE_URL is not set. Add it as an environment variable (e.g. your Neon connection string) and redeploy.');
+  }
   ensureStorage();
   await migrate({ log: true });
   if (env.SEED_ON_START) {
