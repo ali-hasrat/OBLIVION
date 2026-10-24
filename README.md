@@ -278,15 +278,16 @@ The API tests reset `TEST_DATABASE_URL` (default `postgres://onboardiq:onboardiq
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ali-hasrat/OBLIVION)
 
-`render.yaml` creates three resources on the free plan:
+`render.yaml` creates two free web services:
 
 | Resource | What it runs |
 |---|---|
 | `oblivion-onboardiq` | Web app + API in one container (root `Dockerfile`; the API serves the built web app) – migrates and seeds the database on first start |
 | `oblivion-ai` | Python AI extraction service (`apps/ai-service/Dockerfile`) |
-| `oblivion-db` | PostgreSQL |
 
-The app is then at `https://oblivion-onboardiq.onrender.com`. Free-plan notes: services sleep after 15 minutes without traffic (the first request afterwards takes about a minute); Render's free PostgreSQL expires after 30 days unless upgraded. Uploaded documents are also stored in PostgreSQL (`stored_files`), so they survive restarts of the free instance.
+The database is external (Render allows only one free PostgreSQL per workspace, and it expires after 30 days). Create a free PostgreSQL at [neon.tech](https://neon.tech), copy its connection string (`postgresql://…?sslmode=require`) and paste it when Render asks for `DATABASE_URL`.
+
+The app is then at `https://oblivion-onboardiq.onrender.com`. Free services sleep after 15 minutes without traffic (the first request afterwards takes about a minute). Uploaded documents are also stored in PostgreSQL (`stored_files`), so they survive restarts of the free instance.
 
 ## Screenshots
 

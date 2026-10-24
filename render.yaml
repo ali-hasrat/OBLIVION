@@ -1,7 +1,8 @@
 # Render Blueprint: https://render.com/deploy?repo=https://github.com/ali-hasrat/OBLIVION
 #   oblivion-onboardiq  web app + API (one Docker container)
 #   oblivion-ai         Python AI extraction service
-#   oblivion-db         PostgreSQL
+# PostgreSQL is not created here (Render allows one free database per workspace): Render asks for
+# DATABASE_URL on the first sync – paste a connection string, e.g. from a free Neon project (neon.tech).
 services:
   - type: web
     name: oblivion-onboardiq
@@ -14,9 +15,7 @@ services:
       - key: PORT
         value: "4000"
       - key: DATABASE_URL
-        fromDatabase:
-          name: oblivion-db
-          property: connectionString
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: SERVICE_KEY
@@ -50,9 +49,3 @@ services:
         value: "8000"
       - key: SERVICE_KEY
         generateValue: true
-
-databases:
-  - name: oblivion-db
-    plan: free
-    databaseName: onboardiq
-    user: onboardiq
