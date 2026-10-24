@@ -274,6 +274,20 @@ The API tests reset `TEST_DATABASE_URL` (default `postgres://onboardiq:onboardiq
 | "Email or password is incorrect" for an account you created | Accounts are stored in PostgreSQL and survive restarts; passwords are case-sensitive – check Caps Lock and use **Show** on the password field to see what was typed (or autofilled) |
 | Port already in use | Change `PORT` in `.env` (API) or the port in `apps/web/vite.config.ts`; when moving the API, start the web with `VITE_PROXY_TARGET=http://localhost:<port>` |
 
+## Deploy to Render (free)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ali-hasrat/OBLIVION)
+
+`render.yaml` creates three resources on the free plan:
+
+| Resource | What it runs |
+|---|---|
+| `oblivion-onboardiq` | Web app + API in one container (root `Dockerfile`; the API serves the built web app) – migrates and seeds the database on first start |
+| `oblivion-ai` | Python AI extraction service (`apps/ai-service/Dockerfile`) |
+| `oblivion-db` | PostgreSQL |
+
+The app is then at `https://oblivion-onboardiq.onrender.com`. Free-plan notes: services sleep after 15 minutes without traffic (the first request afterwards takes about a minute); Render's free PostgreSQL expires after 30 days unless upgraded. Uploaded documents are also stored in PostgreSQL (`stored_files`), so they survive restarts of the free instance.
+
 ## Screenshots
 
 `docs/screenshots/` contains the application screens captured during the end-to-end test run (login, application wizard, auto-approval, review queue, workbench before/after the example-12 correction, rules and screening tabs, the maker-checker 403, checker queue, dashboard, audit history, rules & watchlists, mobile layout).

@@ -1,0 +1,58 @@
+# Render Blueprint: https://render.com/deploy?repo=https://github.com/ali-hasrat/OBLIVION
+#   oblivion-onboardiq  web app + API (one Docker container)
+#   oblivion-ai         Python AI extraction service
+#   oblivion-db         PostgreSQL
+services:
+  - type: web
+    name: oblivion-onboardiq
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PORT
+        value: "4000"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: oblivion-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SERVICE_KEY
+        fromService:
+          type: web
+          name: oblivion-ai
+          envVarKey: SERVICE_KEY
+      - key: EXTRACTION_PROVIDER
+        value: mock
+      # Free services sleep when idle; allow time for the AI service to wake up.
+      - key: AI_SERVICE_URL
+        value: https://oblivion-ai.onrender.com
+      - key: AI_TIMEOUT_MS
+        value: "60000"
+      - key: CORE_BANKING_URL
+        value: ""
+      - key: DEMO_BUSINESS_DATE
+        value: "2026-03-05"
+      - key: SEED_ON_START
+        value: "true"
+
+  - type: web
+    name: oblivion-ai
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/ai-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: SERVICE_KEY
+        generateValue: true
+
+databases:
+  - name: oblivion-db
+    plan: free
+    databaseName: onboardiq
+    user: onboardiq
